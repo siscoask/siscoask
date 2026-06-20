@@ -1,16 +1,21 @@
-## Hi there 👋
+Hi, I'm Sisco 👋
 
-<!--
-**siscoask/siscoask** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
+☁️ Aspiring Cloud Security Engineer
 
-Here are some ideas to get you started:
+🔐 Currently Learning:
 
-- 🔭 I’m currently working on ...
-- 🌱 I’m currently learning ...
-- 👯 I’m looking to collaborate on ...
-- 🤔 I’m looking for help with ...
-- 💬 Ask me about ...
-- 📫 How to reach me: ...
-- 😄 Pronouns: ...
-- ⚡ Fun fact: ...
--->
+AWS
+Networking
+Linux
+Cybersecurity
+
+🚀 2026 Goals:
+
+Complete AWS Fundamentals
+Build 10 Cloud Projects
+Earn AWS Certification
+Start Cloud Security Labs
+
+📫 Connect With Me:
+
+LinkedIn: https://www.linkedin.com/in/siscoask/
