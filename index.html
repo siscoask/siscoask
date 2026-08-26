@@ -352,6 +352,7 @@
     transition:background 0.2s ease;
   }
   .case:hover{ background:var(--panel); }
+  .case-static:hover{ background:var(--void); }
 
   .case-head{
     display:flex;
@@ -364,6 +365,73 @@
     font-family:'Hanken Grotesk', sans-serif;
     font-size:1.1rem;
     font-weight:700;
+  }
+
+  .case-arrow-link{
+    font-family:'JetBrains Mono', monospace;
+    font-size:13px;
+    color:var(--text-faint);
+    text-decoration:none;
+    white-space:nowrap;
+    transition:color 0.2s ease, transform 0.2s ease;
+    display:inline-block;
+  }
+  .case-arrow-link:hover{ color:var(--violet); transform:translateX(3px); }
+
+  .case-study{ margin-top:14px; }
+  .case-study summary{
+    list-style:none;
+    cursor:pointer;
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    color:var(--violet);
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+    padding:4px 0;
+  }
+  .case-study summary::-webkit-details-marker{ display:none; }
+  .case-study summary::before{
+    content:'+';
+    font-size:14px;
+    line-height:1;
+  }
+  .case-study[open] summary::before{ content:'–'; }
+  .case-study[open] summary{ margin-bottom:6px; }
+
+  .case-study-body{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:18px;
+    padding:18px 20px;
+    margin-top:6px;
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:10px;
+  }
+  @media (min-width:640px){
+    .case-study-body{ grid-template-columns:1fr 1fr; }
+  }
+  .cs-block h4{
+    font-family:'JetBrains Mono', monospace;
+    font-size:10.5px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--text-faint);
+    margin-bottom:7px;
+  }
+  .cs-block p{
+    font-size:0.9rem;
+    color:var(--text-muted);
+    line-height:1.6;
+  }
+  .cs-block.cs-full{ grid-column:1 / -1; }
+  .cs-stack{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    color:var(--violet);
   }
   .case-desc{ font-size:0.92rem; color:var(--text-muted); max-width:56ch; }
   .case-tags{
@@ -517,7 +585,7 @@
           <div class="fact"><span>Based</span><span>Nigeria</span></div>
           <div class="fact"><span>Focus</span><span>Cloud &amp; Security</span></div>
           <div class="fact"><span>Also builds</span><span>Software · AI · Design</span></div>
-          <div class="fact"><span>Status</span><span>Open to work</span></div>
+          <div class="fact"><span>Status</span><span>Open to opportunities</span></div>
         </div>
       </div>
     </div>
@@ -588,66 +656,220 @@
       <div class="track">
         <p class="track-label"><span class="glyph">♃</span> Security &amp; Cloud</p>
         <div class="case-list">
-          <a class="case" href="https://cryptell.vercel.app/" target="_blank" rel="noopener">
+          <div class="case case-static">
             <div class="case-head">
               <div class="case-title">Cryptell</div>
-              <span class="case-arrow">OPEN →</span>
+              <a class="case-arrow-link" href="https://cryptell.vercel.app/" target="_blank" rel="noopener">OPEN →</a>
             </div>
             <div class="case-desc">A client-side cryptography workbench — AES-GCM, RSA-OAEP/PSS, ECDH key exchange, JWT tooling and password entropy checks, all running in-browser.</div>
             <div class="case-tags">WEBCRYPTO · AES/RSA · KEY DERIVATION</div>
-          </a>
-          <a class="case" href="https://my30labsproject.vercel.app/" target="_blank" rel="noopener">
+            <details class="case-study">
+              <summary>Read the case study</summary>
+              <div class="case-study-body">
+                <div class="cs-block">
+                  <h4>The Problem</h4>
+                  <p>Most "learn cryptography" resources are either pure theory or copy-paste snippets with no visibility into what's actually happening to the data. I wanted one tool that ran real WebCrypto operations and showed the real output — so the concepts stop being abstract.</p>
+                </div>
+                <div class="cs-block">
+                  <h4>The Build</h4>
+                  <p>Built entirely on the browser's native WebCrypto API — no external crypto libraries, no backend. Covers symmetric and asymmetric encryption, hashing, HMAC, digital signatures, simulated ECDH key exchange between two parties, PBKDF2/Argon2id key derivation, JWT tooling, and in-memory file hashing/encryption. Keys and plaintext never leave the tab.</p>
+                </div>
+                <div class="cs-block">
+                  <h4>Security Decisions</h4>
+                  <p>AES-GCM is the default symmetric cipher because it bundles authentication into encryption itself — tampered ciphertext is caught automatically. Every operation generates a fresh IV, since reusing one with the same key silently breaks AES-GCM's guarantees. RSA-OAEP is capped to small payloads by design, which forces the correct pattern: RSA wraps a symmetric key, AES-GCM handles the actual data.</p>
+                </div>
+                <div class="cs-block">
+                  <h4>What It Exposes</h4>
+                  <p>Building this as a real, usable tool — not a demo — makes the constraints impossible to ignore. IV reuse, RSA's payload limits, why encoding isn't encryption: these stop being trivia and become things the tool has to actively guard against or explain.</p>
+                </div>
+                <div class="cs-block cs-full">
+                  <h4>Stack</h4>
+                  <p class="cs-stack">WebCrypto API · Vanilla JavaScript · Client-side only, no backend</p>
+                </div>
+              </div>
+            </details>
+          </div>
+          <div class="case case-static">
             <div class="case-head">
               <div class="case-title">30 Labs Project</div>
-              <span class="case-arrow">OPEN →</span>
+              <a class="case-arrow-link" href="https://my30labsproject.vercel.app/" target="_blank" rel="noopener">OPEN →</a>
             </div>
             <div class="case-desc">Documented CompTIA Security+ lab work — Linux, Kali, Wireshark, tcpdump, Hashcat, DNS reconnaissance and scripting fundamentals.</div>
             <div class="case-tags">LINUX · NETWORKING · BASH / PYTHON</div>
-          </a>
+            <details class="case-study">
+              <summary>Read the case study</summary>
+              <div class="case-study-body">
+                <div class="cs-block">
+                  <h4>What I Set Out To Learn</h4>
+                  <p>The practical layer underneath cloud security — networking, Linux, and offensive-security tooling — not just theory. Completed as part of a structured Cyber Security course (CompTIA Security+ track, via 101labs.net).</p>
+                </div>
+                <div class="cs-block">
+                  <h4>Labs &amp; Experiments</h4>
+                  <p>29 labs across three areas: network diagnostics (traceroute, ping, nslookup, dig, ifconfig/ipconfig, netstat, route, ARP), offensive/recon tooling (Hping, Scanless, dnsenum, Hashcat password cracking, MAC spoofing, WPS attacks via Reaver and Wifite, HTTP credential capture with Wireshark, packet capture with tcpdump), and scripting from fundamentals to advanced (Bash and Python).</p>
+                </div>
+                <div class="cs-block">
+                  <h4>Tools Used</h4>
+                  <p>A self-configured Kali Linux VM, Wireshark, tcpdump, Hashcat, Reaver, Wifite, and the native Linux/Windows networking toolset.</p>
+                </div>
+                <div class="cs-block">
+                  <h4>What I Learned</h4>
+                  <p>Seeing an attack from the tool's-eye view — capturing credentials sent over plain HTTP, cracking a weak hash with Hashcat — makes the reasoning behind security controls concrete in a way reading about them never does.</p>
+                </div>
+                <div class="cs-block cs-full">
+                  <h4>Stack</h4>
+                  <p class="cs-stack">Kali Linux · Wireshark · tcpdump · Hashcat · Bash · Python</p>
+                </div>
+              </div>
+            </details>
+          </div>
         </div>
       </div>
 
       <div class="track">
         <p class="track-label"><span class="glyph">♃</span> Software &amp; Product</p>
         <div class="case-list">
-          <a class="case" href="https://elarapay.vercel.app/" target="_blank" rel="noopener">
+          <div class="case case-static">
             <div class="case-head">
               <div class="case-title">ElaraPay</div>
-              <span class="case-arrow">OPEN →</span>
+              <a class="case-arrow-link" href="https://elarapay.vercel.app/" target="_blank" rel="noopener">OPEN →</a>
             </div>
             <div class="case-desc">An offline-first fintech wallet PWA — virtual cards, bill payments, savings goals and six full themes, built in vanilla JS.</div>
             <div class="case-tags">PWA · SERVICE WORKER · FINTECH UX</div>
-          </a>
-          <a class="case" href="https://linesbysisco.space-z.ai/" target="_blank" rel="noopener">
+            <details class="case-study">
+              <summary>Read the case study</summary>
+              <div class="case-study-body">
+                <div class="cs-block">
+                  <h4>The Idea</h4>
+                  <p>Prove I could design and build a fintech product end-to-end — not a mockup, a fully functional wallet with real interaction logic, positioned as "Wealth, Elevated."</p>
+                </div>
+                <div class="cs-block">
+                  <h4>The Build</h4>
+                  <p>A PWA, installable to the home screen. Multi-step onboarding, a tiered rewards system (Silver/Gold/Platinum), transfers, bill payments, a tap-to-flip virtual card, savings goals, and a quick-loan simulator with live repayment calculation — across six visual themes.</p>
+                </div>
+                <div class="cs-block">
+                  <h4>Offline-First Decisions</h4>
+                  <p>Every balance and transaction lives in the browser's local storage — nothing hits a server. That constraint shaped the architecture: every action had to update state instantly and persist locally instead of round-tripping to an API.</p>
+                </div>
+                <div class="cs-block">
+                  <h4>UX Decisions</h4>
+                  <p>PIN-gated transactions, hidden balance by default, hold-to-copy on the virtual card, streaks and cashback — small mechanics that make a wallet feel alive rather than static.</p>
+                </div>
+                <div class="cs-block cs-full">
+                  <h4>What I'd Improve</h4>
+                  <p>Swap local storage for a real backend — auth and a persisted ledger — to move it from a convincing simulation to a deployable product.</p>
+                </div>
+                <div class="cs-block cs-full">
+                  <h4>Stack</h4>
+                  <p class="cs-stack">PWA · Service Worker · Vanilla JavaScript · LocalStorage</p>
+                </div>
+              </div>
+            </details>
+          </div>
+          <div class="case case-static">
             <div class="case-head">
               <div class="case-title">SmoothLines</div>
-              <span class="case-arrow">OPEN →</span>
+              <a class="case-arrow-link" href="https://linesbysisco.space-z.ai/" target="_blank" rel="noopener">OPEN →</a>
             </div>
             <div class="case-desc">A consumer app for discovering and rating pickup lines by category — small in scope, fully polished in execution.</div>
             <div class="case-tags">CONSUMER APP · UX POLISH</div>
-          </a>
-          <a class="case" href="https://vybratez-entertainment.vercel.app/" target="_blank" rel="noopener">
+            <details class="case-study">
+              <summary>Read the case study</summary>
+              <div class="case-study-body">
+                <div class="cs-block">
+                  <h4>The Idea</h4>
+                  <p>A small, fun consumer app — proof I can ship outside the security/fintech lane and still make it feel considered rather than thrown together.</p>
+                </div>
+                <div class="cs-block">
+                  <h4>The Build</h4>
+                  <p>Browse pickup lines by category, save favorites, rate and share — a simple loop, built with real product polish: custom app icon, installable, fully themed.</p>
+                </div>
+                <div class="cs-block cs-full">
+                  <h4>UX Decisions</h4>
+                  <p>Kept the interaction loop tight — browse, react, save — no unnecessary steps. A "fun" app dies the moment it feels like effort to use.</p>
+                </div>
+                <div class="cs-block cs-full">
+                  <h4>Stack</h4>
+                  <p class="cs-stack">Next.js · Responsive UI · PWA basics</p>
+                </div>
+              </div>
+            </details>
+          </div>
+          <div class="case case-static">
             <div class="case-head">
               <div class="case-title">Vybratez Entertainment</div>
-              <span class="case-arrow">OPEN →</span>
+              <a class="case-arrow-link" href="https://vybratez-entertainment.vercel.app/" target="_blank" rel="noopener">OPEN →</a>
             </div>
             <div class="case-desc">A full booking site for a Nigeria-based MC and events business — service catalog, WhatsApp-integrated booking flow, and FAQ, built end-to-end for a real client.</div>
             <div class="case-tags">CLIENT PROJECT · BOOKING FLOW · WHATSAPP INTEGRATION</div>
-          </a>
+            <details class="case-study">
+              <summary>Read the case study</summary>
+              <div class="case-study-body">
+                <div class="cs-block">
+                  <h4>The Client</h4>
+                  <p>Vybratez Entertainment — a Nigeria-based solo MC, host and hype man running events, artist promotion and sound equipment rental.</p>
+                </div>
+                <div class="cs-block">
+                  <h4>The Problem</h4>
+                  <p>A one-person business fielding bookings and questions ad hoc over DMs, with no single place to show services, credibility or availability.</p>
+                </div>
+                <div class="cs-block">
+                  <h4>The Solution</h4>
+                  <p>A full site: sharp positioning on the hero, a service catalog covering MC work, hyping, event planning, artist promotion, show organization, sound rental and shoutouts, booking cards per service, and an FAQ answering the questions clients actually ask before booking.</p>
+                </div>
+                <div class="cs-block">
+                  <h4>Booking Flow</h4>
+                  <p>Every booking path routes to WhatsApp pre-filled with context — the fastest path to a reply for a business that already runs on direct messaging, instead of a contact form that goes quiet.</p>
+                </div>
+                <div class="cs-block">
+                  <h4>Result</h4>
+                  <p>Live, deployed, and in active use — built and shipped for a real paying-client relationship, not a self-directed exercise.</p>
+                </div>
+                <div class="cs-block cs-full">
+                  <h4>Stack</h4>
+                  <p class="cs-stack">React / Next.js · WhatsApp Deep-Linking · Vercel</p>
+                </div>
+              </div>
+            </details>
+          </div>
         </div>
       </div>
 
       <div class="track">
         <p class="track-label"><span class="glyph">♃</span> AI-Assisted Builds</p>
         <div class="case-list">
-          <a class="case" href="https://profilo.base44.app" target="_blank" rel="noopener">
+          <div class="case case-static">
             <div class="case-head">
               <div class="case-title">Profilo</div>
-              <span class="case-arrow">OPEN →</span>
+              <a class="case-arrow-link" href="https://profilo.base44.app" target="_blank" rel="noopener">OPEN →</a>
             </div>
             <div class="case-desc">An editorial-grade, AI-powered résumé builder for telling career stories with sophistication and precision.</div>
             <div class="case-tags">AI-ASSISTED · PRODUCT DESIGN</div>
-          </a>
+            <details class="case-study">
+              <summary>Read the case study</summary>
+              <div class="case-study-body">
+                <div class="cs-block">
+                  <h4>The Idea</h4>
+                  <p>Résumé builders are almost universally template-generic. I wanted one that felt editorial — considered, typographic, like something a magazine would produce — not another dropdown-driven form.</p>
+                </div>
+                <div class="cs-block">
+                  <h4>What I Built</h4>
+                  <p>A builder and settings flow for composing a résumé with an editorial visual language instead of a generic corporate template.</p>
+                </div>
+                <div class="cs-block">
+                  <h4>Where AI Fits</h4>
+                  <p>Built on an AI-native app platform (Base44), which handled a lot of the scaffolding — but the product direction, the editorial positioning, and the visual and UX decisions were mine to shape and iterate on. AI as a build accelerant, not the whole idea.</p>
+                </div>
+                <div class="cs-block cs-full">
+                  <h4>Design Decisions</h4>
+                  <p>Typography-led layout choices over generic form-builder UI — the goal was for the résumé itself to look considered, not just the tool that made it.</p>
+                </div>
+                <div class="cs-block cs-full">
+                  <h4>Stack</h4>
+                  <p class="cs-stack">Base44 (AI App Platform) · Editorial UI Design</p>
+                </div>
+              </div>
+            </details>
+          </div>
         </div>
       </div>
     </div>
