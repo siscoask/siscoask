@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sisco Ask — Cloud Security · Code · Design</title>
+<meta name="description" content="Sisco Ask — aspiring Cloud Security Engineer. Building things, breaking things, securing things.">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%2308070b'/%3E%3Ctext x='32' y='44' text-anchor='middle' font-family='sans-serif' font-size='38' fill='%238b5fc4'%3E%E2%99%83%3C/text%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --void:#08070b;
+    --panel:#120f18;
+    --panel-hi:#1b1624;
+    --line:#2a2334;
+    --violet:#8b5fc4;
+    --violet-deep:#4a2d6e;
+    --violet-dim:#3a2f4d;
+    --text:#ece8f0;
+    --text-muted:#9c94a8;
+    --text-faint:#5f5670;
+    --maxw:1120px;
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{ scroll-behavior:smooth; }
+  body{
+    background:var(--void);
+    color:var(--text);
+    font-family:'Inter', sans-serif;
+    font-size:16px;
+    line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+
+  ::selection{ background:var(--violet); color:var(--void); }
+  a{ color:inherit; }
+  img{ max-width:100%; display:block; }
+  :focus-visible{ outline:2px solid var(--violet); outline-offset:3px; }
+
+  .glyph{
+    font-family:-apple-system, "Segoe UI Symbol", "Noto Sans Symbols", sans-serif;
+  }
+
+  /* ambient violet glow, from the portrait's own palette */
+  body::before{
+    content:'';
+    position:fixed;
+    top:-20%; left:50%;
+    transform:translateX(-50%);
+    width:900px; height:900px;
+    background:radial-gradient(circle, rgba(139,95,196,0.10), transparent 70%);
+    pointer-events:none;
+    z-index:0;
+  }
+
+  .wrap{
+    max-width:var(--maxw);
+    margin:0 auto;
+    padding:0 24px;
+  }
+
+  h1,h2,h3{
+    font-family:'Hanken Grotesk', sans-serif;
+    letter-spacing:-0.015em;
+  }
+
+  .eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.16em;
+    text-transform:uppercase;
+    color:var(--violet);
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .eyebrow .glyph{ font-size:13px; }
+  .eyebrow::after{
+    content:'';
+    flex:1;
+    height:1px;
+    background:var(--line);
+  }
+
+  /* ===== NAV ===== */
+  header.nav{
+    position:sticky;
+    top:0;
+    z-index:50;
+    background:rgba(8,7,11,0.82);
+    backdrop-filter:blur(12px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-inner{
+    max-width:var(--maxw);
+    margin:0 auto;
+    padding:14px 24px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+  }
+  .nav-mark{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    text-decoration:none;
+    font-family:'Hanken Grotesk', sans-serif;
+    font-weight:700;
+    font-size:1rem;
+    letter-spacing:0.01em;
+    white-space:nowrap;
+  }
+  .nav-mark .glyph{
+    color:var(--violet);
+    font-size:1.15rem;
+  }
+
+  .nav-links{
+    display:flex;
+    gap:22px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:11.5px;
+    letter-spacing:0.05em;
+    text-transform:uppercase;
+  }
+  .nav-links a{
+    text-decoration:none;
+    color:var(--text-muted);
+    transition:color 0.2s ease;
+  }
+  .nav-links a:hover{ color:var(--violet); }
+  @media (max-width:760px){ .nav-links{ display:none; } }
+
+  .nav-icons{
+    display:flex;
+    gap:8px;
+    flex-shrink:0;
+  }
+  .icon-btn{
+    width:36px; height:36px;
+    border:1px solid var(--line);
+    border-radius:8px;
+    display:flex; align-items:center; justify-content:center;
+    text-decoration:none;
+    color:var(--text-muted);
+    transition:all 0.2s ease;
+    flex-shrink:0;
+  }
+  .icon-btn svg{ width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:1.8; }
+  .icon-btn .fill-icon{ fill:currentColor; stroke:none; }
+  .icon-btn:hover{
+    border-color:var(--violet);
+    color:var(--violet);
+    transform:translateY(-1px);
+  }
+  .icon-btn.lg{ width:48px; height:48px; border-radius:10px; }
+  .icon-btn.lg svg{ width:19px; height:19px; }
+
+  /* ===== HERO ===== */
+  .hero{
+    position:relative;
+    padding:64px 0 88px;
+    border-bottom:1px solid var(--line);
+  }
+  .hero-grid{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:40px;
+    align-items:center;
+  }
+  @media (min-width:860px){
+    .hero-grid{
+      grid-template-columns:1.15fr 0.85fr;
+      gap:56px;
+    }
+  }
+
+  .hero-copy{ position:relative; z-index:1; }
+
+  .hero h1{
+    font-size:clamp(2.1rem, 5.2vw, 3.4rem);
+    font-weight:700;
+    line-height:1.12;
+    margin:20px 0 18px 0;
+  }
+  .hero h1 span{ color:var(--violet); }
+
+  .hero-sub{
+    font-size:1.02rem;
+    color:var(--text-muted);
+    max-width:52ch;
+    margin-bottom:30px;
+  }
+  .hero-sub strong{ color:var(--text); font-weight:600; }
+
+  .hero-cta{ display:flex; gap:14px; flex-wrap:wrap; }
+  .btn{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12.5px;
+    letter-spacing:0.05em;
+    text-transform:uppercase;
+    text-decoration:none;
+    padding:13px 22px;
+    border-radius:8px;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    transition:all 0.22s ease;
+    border:1px solid var(--line);
+  }
+  .btn-primary{
+    background:var(--violet);
+    color:var(--void);
+    border-color:var(--violet);
+    font-weight:600;
+  }
+  .btn-primary:hover{ background:#a077d6; border-color:#a077d6; transform:translateY(-1px); }
+  .btn-ghost{ color:var(--text-muted); background:transparent; }
+  .btn-ghost:hover{ color:var(--text); border-color:var(--violet); }
+
+  .hero-portrait{
+    position:relative;
+    aspect-ratio:1/1;
+    max-width:420px;
+    margin:0 auto;
+    border-radius:18px;
+    overflow:hidden;
+  }
+  .hero-portrait img{
+    width:100%; height:100%;
+    object-fit:cover;
+    -webkit-mask-image:radial-gradient(circle at 50% 42%, black 58%, transparent 92%);
+    mask-image:radial-gradient(circle at 50% 42%, black 58%, transparent 92%);
+  }
+  .hero-portrait::after{
+    content:'';
+    position:absolute; inset:0;
+    box-shadow:inset 0 0 90px 20px rgba(8,7,11,0.9);
+    pointer-events:none;
+  }
+
+  /* ===== SECTION SHELL ===== */
+  .section{ position:relative; padding:76px 0; border-bottom:1px solid var(--line); }
+  .section-head{ margin-bottom:36px; position:relative; }
+  .section-head h2{
+    font-size:clamp(1.5rem, 3vw, 2rem);
+    font-weight:700;
+    margin-top:14px;
+  }
+  .about-name{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    color:var(--text-faint);
+    letter-spacing:0.03em;
+    margin-top:10px;
+  }
+
+
+  /* ===== ABOUT ===== */
+  .about-body{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:28px;
+    position:relative;
+    z-index:1;
+  }
+  @media (min-width:760px){ .about-body{ grid-template-columns:1.4fr 1fr; gap:56px; } }
+  .about-body p{
+    font-size:1.02rem;
+    color:var(--text-muted);
+    margin-bottom:16px;
+    max-width:58ch;
+  }
+  .about-body p strong{ color:var(--text); font-weight:600; }
+
+  .fact-list{ font-family:'JetBrains Mono', monospace; font-size:12.5px; }
+  .fact{
+    display:flex; justify-content:space-between; gap:16px;
+    padding:12px 0; border-top:1px solid var(--line); color:var(--text-muted);
+  }
+  .fact:last-child{ border-bottom:1px solid var(--line); }
+  .fact span:last-child{ color:var(--text); text-align:right; }
+
+  /* ===== SKILLS ===== */
+  .skill-groups{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:1px;
+    background:var(--line);
+    border:1px solid var(--line);
+    border-radius:12px;
+    overflow:hidden;
+    position:relative; z-index:1;
+  }
+  @media (min-width:640px){ .skill-groups{ grid-template-columns:1fr 1fr; } }
+  .skill-card{ background:var(--void); padding:26px; }
+  .skill-card h3{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11.5px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--violet);
+    font-weight:500;
+    margin-bottom:15px;
+  }
+  .chip-row{ display:flex; flex-wrap:wrap; gap:8px; }
+  .chip{
+    font-size:13px;
+    color:var(--text-muted);
+    border:1px solid var(--line);
+    padding:6px 12px;
+    border-radius:20px;
+    transition:all 0.2s ease;
+  }
+  .chip:hover{ border-color:var(--violet); color:var(--text); }
+
+  /* ===== WORK ===== */
+  .track{ margin-bottom:52px; position:relative; z-index:1; }
+  .track:last-child{ margin-bottom:0; }
+  .track-label{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--text-faint);
+    margin-bottom:16px;
+    display:flex; align-items:center; gap:9px;
+  }
+  .track-label .glyph{ color:var(--violet); }
+
+  .case-list{
+    display:flex; flex-direction:column; gap:1px;
+    background:var(--line); border:1px solid var(--line);
+    border-radius:12px; overflow:hidden;
+  }
+  .case{
+    background:var(--void);
+    padding:22px 24px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    text-decoration:none;
+    color:inherit;
+    transition:background 0.2s ease;
+  }
+  .case:hover{ background:var(--panel); }
+
+  .case-head{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    gap:16px;
+  }
+
+  .case-title{
+    font-family:'Hanken Grotesk', sans-serif;
+    font-size:1.1rem;
+    font-weight:700;
+  }
+  .case-desc{ font-size:0.92rem; color:var(--text-muted); max-width:56ch; }
+  .case-tags{
+    font-family:'JetBrains Mono', monospace;
+    font-size:10.5px;
+    color:var(--text-faint);
+    margin-top:9px;
+    letter-spacing:0.03em;
+  }
+  .case-arrow{
+    font-family:'JetBrains Mono', monospace;
+    font-size:13px;
+    color:var(--text-faint);
+    transition:transform 0.2s ease, color 0.2s ease;
+    white-space:nowrap;
+  }
+  .case:hover .case-arrow{ color:var(--violet); transform:translateX(3px); }
+
+  /* ===== GRAPHICS PLATES ===== */
+  .plate-grid{
+    display:grid;
+    grid-template-columns:repeat(2, 1fr);
+    gap:14px;
+    position:relative; z-index:1;
+  }
+  @media (min-width:640px){ .plate-grid{ grid-template-columns:repeat(3, 1fr); } }
+  .plate{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+  }
+  .plate-frame{
+    aspect-ratio:4/5;
+    border:1px solid var(--line);
+    border-radius:10px;
+    overflow:hidden;
+    background:var(--panel);
+  }
+  .plate-frame img{
+    width:100%; height:100%;
+    object-fit:cover;
+    transition:transform 0.35s ease;
+  }
+  .plate:hover .plate-frame img{ transform:scale(1.045); }
+  .plate-caption{
+    font-family:'JetBrains Mono', monospace;
+    font-size:10.5px;
+    letter-spacing:0.04em;
+    color:var(--text-faint);
+    text-align:center;
+  }
+  .plate-empty{
+    aspect-ratio:4/5;
+    border:1px dashed var(--line);
+    border-radius:10px;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px;
+    color:var(--text-faint);
+    background:repeating-linear-gradient(135deg, transparent, transparent 11px, var(--panel) 11px, var(--panel) 12px);
+  }
+  .plate-empty .num{ font-family:'JetBrains Mono', monospace; font-size:11px; }
+  .plate-empty .lbl{ font-family:'JetBrains Mono', monospace; font-size:10px; letter-spacing:0.08em; text-transform:uppercase; }
+
+  /* ===== CONTACT ===== */
+  .contact-section{ border-bottom:none; padding-bottom:80px; }
+  .contact-inner{ position:relative; z-index:1; }
+  .contact-inner h2{
+    font-size:clamp(1.8rem, 4vw, 2.6rem);
+    font-weight:700;
+    max-width:16ch;
+    margin-bottom:28px;
+  }
+  .icon-row{ display:flex; gap:12px; flex-wrap:wrap; }
+
+  footer{
+    padding:26px 0 40px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:10.5px;
+    letter-spacing:0.05em;
+    color:var(--text-faint);
+    display:flex;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:10px;
+  }
+
+  @media (prefers-reduced-motion: reduce){ html{ scroll-behavior:auto; } }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a href="#top" class="nav-mark"><span class="glyph">♃</span> SISCO ASK</a>
+    <nav class="nav-links">
+      <a href="#about">About</a>
+      <a href="#skills">Skills</a>
+      <a href="#work">Work</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <div class="nav-icons">
+      <a class="icon-btn" href="https://github.com/siscoask" target="_blank" rel="noopener" aria-label="GitHub">
+        <svg viewBox="0 0 24 24"><path class="fill-icon" d="M12 .5C5.73.5.5 5.73.5 12c0 5.08 3.29 9.39 7.86 10.91.57.1.78-.25.78-.55v-2.14c-3.2.7-3.87-1.36-3.87-1.36-.53-1.34-1.29-1.7-1.29-1.7-1.05-.72.08-.7.08-.7 1.17.08 1.78 1.2 1.78 1.2 1.03 1.76 2.71 1.26 3.37.96.1-.75.4-1.26.73-1.55-2.55-.29-5.23-1.28-5.23-5.68 0-1.26.45-2.28 1.19-3.08-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11.05 11.05 0 0 1 5.79 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.8 1.19 1.82 1.19 3.08 0 4.41-2.69 5.38-5.25 5.67.41.36.78 1.05.78 2.12v3.14c0 .3.21.66.79.55A10.52 10.52 0 0 0 23.5 12C23.5 5.73 18.27.5 12 .5z"/></svg>
+      </a>
+      <a class="icon-btn" href="https://x.com/siscoask" target="_blank" rel="noopener" aria-label="X">
+        <svg viewBox="0 0 24 24"><path class="fill-icon" d="M18.24 2H21.5l-7.3 8.34L22.8 22h-6.72l-5.26-6.87L4.75 22H1.48l7.8-8.92L1 2h6.88l4.76 6.3L18.24 2zm-1.18 18h1.8L7.03 3.9H5.1L17.06 20z"/></svg>
+      </a>
+      <a class="icon-btn" href="mailto:siscoask@gmail.com" aria-label="Email">
+        <svg viewBox="0 0 24 24"><path d="M3 5h18a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.5 6.5 12 13l9.5-6.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <p class="eyebrow"><span class="glyph">♃</span> CLOUD SECURITY · CODE · AI · DESIGN</p>
+        <h1>Building things. Breaking things.<br><span>Securing</span> things.</h1>
+        <p class="hero-sub">
+          I'm <strong>Sisco Ask</strong>, an aspiring Cloud Security Engineer working across code, AI and design. I ship real products, then go find the ways they'd break.
+        </p>
+        <div class="hero-cta">
+          <a href="#work" class="btn btn-primary">View the work</a>
+          <a href="mailto:siscoask@gmail.com" class="btn btn-ghost">Get in touch</a>
+        </div>
+      </div>
+      <div class="hero-portrait">
+        <img src="sisco-ask.jpg" alt="Portrait of Sisco Ask">
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="section" id="about">
+    <div class="wrap">
+      
+      <div class="section-head">
+        <p class="eyebrow"><span class="glyph">♃</span> PROFILE</p>
+        <h2>The short version</h2>
+        <p class="about-name">Sisco Ask — Sholuade AbdulRazaq Oluwatoyin</p>
+      </div>
+      <div class="about-body">
+        <div>
+          <p>I'm working toward a career securing cloud infrastructure — <strong>AWS, networking, Linux, and the fundamentals underneath it all</strong> — while staying hands-on as a builder. Most of what's below started as "let me see if I can actually ship this," not a class assignment.</p>
+          <p>That means my work spans further than a typical résumé bucket: fintech interfaces, a cryptography workbench, documented security labs, and AI-assisted products. Different surfaces, same instinct — <strong>build it properly, then try to take it apart.</strong></p>
+        </div>
+        <div class="fact-list">
+          <div class="fact"><span>Based</span><span>Nigeria</span></div>
+          <div class="fact"><span>Focus</span><span>Cloud &amp; Security</span></div>
+          <div class="fact"><span>Also builds</span><span>Software · AI · Design</span></div>
+          <div class="fact"><span>Status</span><span>Open to work</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section class="section" id="skills">
+    <div class="wrap">
+      
+      <div class="section-head">
+        <p class="eyebrow"><span class="glyph">♃</span> TOOLING</p>
+        <h2>What I work with</h2>
+      </div>
+      <div class="skill-groups">
+        <div class="skill-card">
+          <h3>Cloud &amp; Security</h3>
+          <div class="chip-row">
+            <span class="chip">AWS (IAM, EC2, Lambda)</span>
+            <span class="chip">CloudFormation</span>
+            <span class="chip">Linux</span>
+            <span class="chip">Networking</span>
+            <span class="chip">Cryptography</span>
+            <span class="chip">Security+ Fundamentals</span>
+          </div>
+        </div>
+        <div class="skill-card">
+          <h3>Software Development</h3>
+          <div class="chip-row">
+            <span class="chip">JavaScript / TypeScript</span>
+            <span class="chip">React &amp; Next.js</span>
+            <span class="chip">HTML / CSS</span>
+            <span class="chip">PWA &amp; Service Workers</span>
+            <span class="chip">Git</span>
+            <span class="chip">Vercel</span>
+          </div>
+        </div>
+        <div class="skill-card">
+          <h3>AI &amp; Vibecoding</h3>
+          <div class="chip-row">
+            <span class="chip">Prompt Engineering</span>
+            <span class="chip">AI-Assisted Dev</span>
+            <span class="chip">Rapid Prototyping</span>
+            <span class="chip">Agentic Workflows</span>
+          </div>
+        </div>
+        <div class="skill-card">
+          <h3>Design</h3>
+          <div class="chip-row">
+            <span class="chip">UI / UX</span>
+            <span class="chip">Graphic Design</span>
+            <span class="chip">Visual Identity</span>
+            <span class="chip">Prototyping</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WORK -->
+  <section class="section" id="work">
+    <div class="wrap">
+      
+      <div class="section-head">
+        <p class="eyebrow"><span class="glyph">♃</span> SELECTED WORK</p>
+        <h2>Case files</h2>
+      </div>
+
+      <div class="track">
+        <p class="track-label"><span class="glyph">♃</span> Security &amp; Cloud</p>
+        <div class="case-list">
+          <a class="case" href="https://cryptell.vercel.app/" target="_blank" rel="noopener">
+            <div class="case-head">
+              <div class="case-title">Cryptell</div>
+              <span class="case-arrow">OPEN →</span>
+            </div>
+            <div class="case-desc">A client-side cryptography workbench — AES-GCM, RSA-OAEP/PSS, ECDH key exchange, JWT tooling and password entropy checks, all running in-browser.</div>
+            <div class="case-tags">WEBCRYPTO · AES/RSA · KEY DERIVATION</div>
+          </a>
+          <a class="case" href="https://my30labsproject.vercel.app/" target="_blank" rel="noopener">
+            <div class="case-head">
+              <div class="case-title">30 Labs Project</div>
+              <span class="case-arrow">OPEN →</span>
+            </div>
+            <div class="case-desc">Documented CompTIA Security+ lab work — Linux, Kali, Wireshark, tcpdump, Hashcat, DNS reconnaissance and scripting fundamentals.</div>
+            <div class="case-tags">LINUX · NETWORKING · BASH / PYTHON</div>
+          </a>
+        </div>
+      </div>
+
+      <div class="track">
+        <p class="track-label"><span class="glyph">♃</span> Software &amp; Product</p>
+        <div class="case-list">
+          <a class="case" href="https://elarapay.vercel.app/" target="_blank" rel="noopener">
+            <div class="case-head">
+              <div class="case-title">ElaraPay</div>
+              <span class="case-arrow">OPEN →</span>
+            </div>
+            <div class="case-desc">An offline-first fintech wallet PWA — virtual cards, bill payments, savings goals and six full themes, built in vanilla JS.</div>
+            <div class="case-tags">PWA · SERVICE WORKER · FINTECH UX</div>
+          </a>
+          <a class="case" href="https://linesbysisco.space-z.ai/" target="_blank" rel="noopener">
+            <div class="case-head">
+              <div class="case-title">SmoothLines</div>
+              <span class="case-arrow">OPEN →</span>
+            </div>
+            <div class="case-desc">A consumer app for discovering and rating pickup lines by category — small in scope, fully polished in execution.</div>
+            <div class="case-tags">CONSUMER APP · UX POLISH</div>
+          </a>
+          <a class="case" href="https://vybratez-entertainment.vercel.app/" target="_blank" rel="noopener">
+            <div class="case-head">
+              <div class="case-title">Vybratez Entertainment</div>
+              <span class="case-arrow">OPEN →</span>
+            </div>
+            <div class="case-desc">A full booking site for a Nigeria-based MC and events business — service catalog, WhatsApp-integrated booking flow, and FAQ, built end-to-end for a real client.</div>
+            <div class="case-tags">CLIENT PROJECT · BOOKING FLOW · WHATSAPP INTEGRATION</div>
+          </a>
+        </div>
+      </div>
+
+      <div class="track">
+        <p class="track-label"><span class="glyph">♃</span> AI-Assisted Builds</p>
+        <div class="case-list">
+          <a class="case" href="https://profilo.base44.app" target="_blank" rel="noopener">
+            <div class="case-head">
+              <div class="case-title">Profilo</div>
+              <span class="case-arrow">OPEN →</span>
+            </div>
+            <div class="case-desc">An editorial-grade, AI-powered résumé builder for telling career stories with sophistication and precision.</div>
+            <div class="case-tags">AI-ASSISTED · PRODUCT DESIGN</div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GRAPHICS -->
+  <section class="section" id="graphics">
+    <div class="wrap">
+      
+      <div class="section-head">
+        <p class="eyebrow"><span class="glyph">♃</span> VISUAL WORK</p>
+        <h2>Design plates</h2>
+      </div>
+      <div class="plate-grid">
+        <div class="plate">
+          <div class="plate-frame"><img src="plate-saynwrld.jpg" alt="SAYNWRLD handcrafted footwear brand poster"></div>
+          <div class="plate-caption">SAYNWRLD — Footwear Brand</div>
+        </div>
+        <div class="plate">
+          <div class="plate-frame"><img src="plate-zaire.jpg" alt="Zaíré fashion brand advertisement"></div>
+          <div class="plate-caption">Zaíré — Fashion Ad</div>
+        </div>
+        <div class="plate">
+          <div class="plate-frame"><img src="plate-sisco-initiative.jpg" alt="The Sisco Initiative coming soon poster"></div>
+          <div class="plate-caption">The Sisco Initiative</div>
+        </div>
+        <div class="plate">
+          <div class="plate-frame"><img src="plate-lola.jpg" alt="Lola Beauty Bar hairstyling flyer"></div>
+          <div class="plate-caption">Lola Beauty Bar</div>
+        </div>
+        <div class="plate">
+          <div class="plate-frame"><img src="plate-cissytrish.jpg" alt="Cissytrish Emporium retail flyer"></div>
+          <div class="plate-caption">Cissytrish Emporium</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="section contact-section" id="contact">
+    <div class="wrap contact-inner">
+      
+      <p class="eyebrow"><span class="glyph">♃</span> CONTACT</p>
+      <h2>Let's talk.</h2>
+      <div class="icon-row">
+        <a class="icon-btn lg" href="https://linkedin.com/in/siscoask" target="_blank" rel="noopener" aria-label="LinkedIn">
+          <svg viewBox="0 0 24 24"><path class="fill-icon" d="M4.98 3.5C4.98 4.88 3.87 6 2.49 6S0 4.88 0 3.5 1.11 1 2.49 1s2.49 1.12 2.49 2.5zM.24 8.25h4.5V23h-4.5V8.25zM8.25 8.25h4.31v2.01h.06c.6-1.13 2.07-2.33 4.26-2.33 4.55 0 5.39 3 5.39 6.9V23h-4.5v-6.75c0-1.61-.03-3.68-2.24-3.68-2.25 0-2.59 1.76-2.59 3.57V23h-4.5V8.25z"/></svg>
+        </a>
+        <a class="icon-btn lg" href="https://github.com/siscoask" target="_blank" rel="noopener" aria-label="GitHub">
+          <svg viewBox="0 0 24 24"><path class="fill-icon" d="M12 .5C5.73.5.5 5.73.5 12c0 5.08 3.29 9.39 7.86 10.91.57.1.78-.25.78-.55v-2.14c-3.2.7-3.87-1.36-3.87-1.36-.53-1.34-1.29-1.7-1.29-1.7-1.05-.72.08-.7.08-.7 1.17.08 1.78 1.2 1.78 1.2 1.03 1.76 2.71 1.26 3.37.96.1-.75.4-1.26.73-1.55-2.55-.29-5.23-1.28-5.23-5.68 0-1.26.45-2.28 1.19-3.08-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11.05 11.05 0 0 1 5.79 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.8 1.19 1.82 1.19 3.08 0 4.41-2.69 5.38-5.25 5.67.41.36.78 1.05.78 2.12v3.14c0 .3.21.66.79.55A10.52 10.52 0 0 0 23.5 12C23.5 5.73 18.27.5 12 .5z"/></svg>
+        </a>
+        <a class="icon-btn lg" href="mailto:siscoask@gmail.com" aria-label="Email">
+          <svg viewBox="0 0 24 24"><path d="M3 5h18a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.5 6.5 12 13l9.5-6.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <a class="icon-btn lg" href="https://wa.me/2349074935326" target="_blank" rel="noopener" aria-label="WhatsApp">
+          <svg viewBox="0 0 24 24"><path class="fill-icon" d="M17.47 14.38c-.29-.15-1.73-.85-2-.95-.27-.1-.46-.15-.66.15-.2.29-.75.94-.92 1.14-.17.19-.34.22-.63.07-.29-.15-1.22-.45-2.33-1.44-.86-.77-1.44-1.71-1.61-2-.17-.29-.02-.45.13-.6.13-.13.29-.34.44-.51.15-.17.19-.29.29-.48.1-.19.05-.36-.02-.51-.07-.15-.66-1.59-.9-2.18-.24-.57-.48-.49-.66-.5h-.56c-.19 0-.51.07-.78.36s-1.02 1-1.02 2.45 1.05 2.85 1.19 3.05c.15.19 2.06 3.15 5.01 4.41.7.3 1.24.48 1.67.62.7.22 1.34.19 1.84.12.56-.08 1.73-.7 1.97-1.39.24-.68.24-1.27.17-1.39-.07-.12-.26-.19-.55-.34zM12.02 22C6.5 22 2 17.52 2 12S6.5 2 12.02 2C17.5 2 22 6.48 22 12s-4.5 10-9.98 10z"/></svg>
+        </a>
+        <a class="icon-btn lg" href="https://x.com/siscoask" target="_blank" rel="noopener" aria-label="X">
+          <svg viewBox="0 0 24 24"><path class="fill-icon" d="M18.24 2H21.5l-7.3 8.34L22.8 22h-6.72l-5.26-6.87L4.75 22H1.48l7.8-8.92L1 2h6.88l4.76 6.3L18.24 2zm-1.18 18h1.8L7.03 3.9H5.1L17.06 20z"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="wrap">
+  <span>&copy; 2026 SISCO ASK</span>
+  <span class="glyph">♃ NEW CASES OPEN ON REQUEST</span>
+</footer>
+
+</body>
+</html>
