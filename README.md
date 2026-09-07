@@ -58,10 +58,3 @@
 [![Portfolio](https://img.shields.io/badge/-Portfolio-8B5FC4?style=for-the-badge&logo=vercel&logoColor=white)](https://siscoask.vercel.app)
 [![X](https://img.shields.io/badge/-X-000000?style=for-the-badge&logo=x&logoColor=white)](https://x.com/siscoask)
 [![Email](https://img.shields.io/badge/-Email-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:siscoask@gmail.com)
-
----
-
-<p align="left">
-  <img src="https://github-readme-stats.vercel.app/api?username=siscoask&show_icons=true&theme=dark&hide_border=true&bg_color=0d1117" alt="Sisco's GitHub stats" height="165"/>
-  <img src="https://github-readme-streak-stats.herokuapp.com/?user=siscoask&theme=dark&hide_border=true&background=0d1117" alt="Sisco's GitHub streak" height="165"/>
-</p>
